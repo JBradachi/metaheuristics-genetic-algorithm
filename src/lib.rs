@@ -1,3 +1,2 @@
+pub mod data;
 pub mod genetico;
-pub mod objetivo;
-pub mod solucao;

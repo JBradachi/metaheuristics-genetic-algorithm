@@ -1,16 +1,5 @@
-use genetic_algorithm::{
-    genetico, objetivo::{Objetivo}, solucao
-};
+use genetic_algorithm::data::Problema;
 
 fn main() {
-    println!("Hello, world!");
-    let mut o1: Objetivo = Objetivo::default();
-    println!("objetivo default {:?}", o1);
-    let mut vetor: Vec<bool> = Vec::new();
-    vetor.push(true);
-    vetor.push(true);
-    vetor.push(false);
-    o1.restricoes.push(vetor);
-    println!("objetivo default {:?}", o1);
-
+    let _p = Problema::load_from("instances/ep02.dat");
 }
