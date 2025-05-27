@@ -1,2 +1,3 @@
 # metaheuristics-tabu
-Repositório dedicado ao desenvolvimento de uma busca tabu para um problema específico
+
+Repository dedicated to developing a tabu search for a specific problem
