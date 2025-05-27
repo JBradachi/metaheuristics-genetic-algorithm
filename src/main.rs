@@ -1,9 +1,8 @@
 use genetic_algorithm::{
-    objetivo, 
-    solucao, 
-    genetico
+    genetico, objetivo::{self, Objetivo}, solucao
 };
 
 fn main() {
     println!("Hello, world!");
+    Objetivo::load_data();
 }
