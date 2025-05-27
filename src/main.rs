@@ -1,7 +1,7 @@
-use busca_tabu::{
+use genetic_algorithm::{
     objetivo, 
     solucao, 
-    tabu
+    genetico
 };
 
 fn main() {
