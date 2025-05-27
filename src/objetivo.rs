@@ -24,53 +24,43 @@ impl Objetivo {
     pub fn load_data(mut self, file_path: &'static str ){
         // let file_path  = "instances/ep01.dat";
 
-        let file = File::open(file_path);
+        let file = File::open(file_path)
+            .expect("Arquivo não pode ser aberto");
 
-        match file {
-            Ok(file_handle) => {
-                let reader = BufReader::new(file_handle);
-                
-                let mut num_ingredientes: i32;
-                let mut num_incompativeis:i32;
-
-                for (line_num, line) 
-                    in reader.lines().enumerate() {
-                    
-                    match line {
-                        Ok(linha) => {
-                            if line_num == 0{
-                                let parse_num: Vec<i32> = linha
-                                    .split_whitespace()
-                                    .filter_map(|s| s.parse().ok())
-                                    .collect();
-                                num_ingredientes = parse_num[0];
-                                num_incompativeis = parse_num[1];
-                                self.peso_max = parse_num[2];
-                                self.ingredientes =  Objetivo::init_ingredientes(num_ingredientes);
-                            }
-                            println!("Linha {}: {}", line_num + 1, linha);
-
-                        }
-                        Err(erro) => {
-                            eprintln!("Ocorreu um erro ao ler as linhas {:?}", erro);            
-                        }
+        let reader = BufReader::new(file);
+        
+        let mut num_ingredientes: i32;
+        let mut num_incompativeis:i32;
+        // reader.lines().next();
+        for (line_num, line) 
+            in reader.lines().enumerate() {
+            
+            match line {
+                Ok(linha) => {
+                    if line_num == 0{
+                        let parse_num: Vec<i32> = linha
+                            .split_whitespace()
+                            .filter_map(|s| s.parse().ok())
+                            .collect();
+                        num_ingredientes = parse_num[0];
+                        num_incompativeis = parse_num[1];
+                        self.peso_max = parse_num[2];
+                        self.ingredientes =  Objetivo::init_ingredientes(num_ingredientes);
                     }
+                    println!("Linha {}: {}", line_num + 1, linha);
 
                 }
-                
-            },
-            Err(erro) => {
-                eprintln!("Ocorreu um erro ao abrir o arquivo {:?}", erro);
-                eprintln!("arquivo: {}", file_path);
+                Err(erro) => {
+                    eprintln!("Ocorreu um erro ao ler as linhas {:?}", erro);            
+                }
             }
-            
         }
     }
     fn init_ingredientes(num_ingredientes: i32) -> Vec<Ingrediente> {
-        let mut ingredientes: Vec<Ingrediente> = Vec::new();
-        for _i in 0..num_ingredientes{
-            ingredientes.push(Ingrediente::default());
-        }
+        let mut ingredientes  = Vec::new();
+        
+        ingredientes.resize(num_ingredientes as usize, 
+                    Ingrediente::default());
         ingredientes
     }
 }
