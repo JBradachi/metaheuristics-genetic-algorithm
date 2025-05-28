@@ -5,7 +5,7 @@ const PEN_PESO: f64 = 100.0;
 const PEN_INCOMPATIVEIS: f64 = 100.0;
 const AR: f64 = 0.5;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct Solucao {
     // vetor de inteiros, onde cada inteiro é o
     // índice de um ingrediente que está presente naquela solução
