@@ -85,7 +85,7 @@ impl Problema {
             let j = pair[0] as usize - 1;
             let k = pair[1] as usize - 1;
             restricoes[j].insert(k);
-            restricoes[k].insert(j);
+            // restricoes[k].insert(j); se precisar descomente, com isso gera um grafo sem direção
         }
         Problema{ peso_max, restricoes, ingredientes }
     }
