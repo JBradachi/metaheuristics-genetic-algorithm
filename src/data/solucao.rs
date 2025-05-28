@@ -1,20 +1,22 @@
 use super::Problema;
+use rand::Rng;
 
 const PEN_PESO: f64 = 100.0;
 const PEN_INCOMPATIVEIS: f64 = 100.0;
+const AR: f64 = 0.5;
 
 #[derive(Clone, Debug)]
 pub struct Solucao {
     // vetor de inteiros, onde cada inteiro é o
     // índice de um ingrediente que está presente naquela solução
-    pub ingredientes: Vec<i32>,
+    pub ingredientes: Vec<usize>,
 
     // valor fitness da mistura
     pub resultado: f64,
 }
 
 pub fn calcula_fitness(
-    ingredientes: &Vec<i32>, 
+    ingredientes: &Vec<usize>, 
     problema: &Problema,
     // pressao = 1 => sem pressão 
     pressao: f64) -> f64 {
@@ -25,12 +27,11 @@ pub fn calcula_fitness(
     
     // pega todos os valores
     for ing in ingredientes.iter().copied(){
-        sabores += problema.ingredientes[ing as usize].sabor as f64;
-        peso_acomulado += problema.ingredientes[ing as usize].peso;
+        sabores += problema.ingredientes[ing].sabor as f64;
+        peso_acomulado += problema.ingredientes[ing].peso;
 
         for inc in ingredientes.iter().copied(){
-            if problema.restricoes[ing as usize].contains(&(inc as usize)){
-                println!("ingrediente {}, incompativel {}", ing, inc);
+            if problema.restricoes[ing as usize].contains(&inc){
                 incompativeis += 1.0;
             }
         }
@@ -45,8 +46,24 @@ pub fn calcula_fitness(
     fitness
 }
 
+pub fn populacao_inicial(tamanho_populacao: usize, pressao: f64, problema: &Problema) -> Vec<Solucao> {
+    let mut populacao: Vec<Solucao> = Vec::new();
+
+    for _j in 0..tamanho_populacao{
+        let mut ingredientes:Vec<usize> = Vec::new();
+        for i in 0..problema.num_ingred{
+            let r = rand::thread_rng().gen_range(0.0, 1.0);
+            if r >= AR{
+                ingredientes.push(i);
+            }
+        }
+        populacao.push(Solucao::new(ingredientes, problema, pressao));
+    }
+    populacao
+}
+
 impl Solucao{
-    pub fn new(ingredientes: Vec<i32>, problema: &Problema, pressao: f64) -> Self {
+    pub fn new(ingredientes: Vec<usize>, problema: &Problema, pressao: f64) -> Self {
         let resultado = calcula_fitness(&ingredientes, problema, pressao);
         Solucao { 
             ingredientes, 

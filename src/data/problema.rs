@@ -20,6 +20,7 @@ pub struct Problema {
 
     /// Ingredientes disponíveis. Cada um é identificado por seu índice
     pub ingredientes: Vec<Ingrediente>,
+    pub num_ingred: usize,
 }
 
 /// Lê um vetor de inteiros da string dada
@@ -87,6 +88,6 @@ impl Problema {
             restricoes[j].insert(k);
             // restricoes[k].insert(j); se precisar descomente, com isso gera um grafo sem direção
         }
-        Problema{ peso_max, restricoes, ingredientes }
+        Problema{ peso_max, restricoes, ingredientes, num_ingred }
     }
 }
