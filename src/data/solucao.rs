@@ -46,7 +46,7 @@ pub fn calcula_fitness(
     fitness
 }
 
-pub fn populacao_inicial(tamanho_populacao: usize, pressao: f64, problema: &Problema) -> Vec<Solucao> {
+pub fn populacao_inicial(tamanho_populacao: usize, pressao_inicial: f64, problema: &Problema) -> Vec<Solucao> {
     let mut populacao: Vec<Solucao> = Vec::new();
 
     for _j in 0..tamanho_populacao{
@@ -57,7 +57,7 @@ pub fn populacao_inicial(tamanho_populacao: usize, pressao: f64, problema: &Prob
                 ingredientes.push(i);
             }
         }
-        populacao.push(Solucao::new(ingredientes, problema, pressao));
+        populacao.push(Solucao::new(ingredientes, problema, pressao_inicial));
     }
     populacao
 }

@@ -20,16 +20,24 @@ pub fn genetico(
     let melhor_solucao: Solucao;
     let populacao: Vec<Solucao> = populacao_inicial(tamanho_populacao, pressao, &problema);
 
-    // while condição de parada
+    // while condição de parada 
+    // (n° x de iterações sem mudar o melhor indivíduo)
+    
         // Seleção
             // seleciona os pais que irão cruzar
+            // obs: guardar melhor indivíduo
 
-            //cruzamento
+        // cruzamento (recebe a população de pais escolhidos)
+        // -> população de filhos
+        
+        // mutação na nova população de filhos e pais
+            // (recebe população de pais e filhos)
+            // -> população mutada de (filhos, pais)
 
+        // Seleção (recebe população mutada de pais e filhos)
             // seleciona quem irá para a proxima geração
             // nova população
 
-        // mutação na nova população
 
     melhor_solucao = get_melhor_solucao(&populacao);
     melhor_solucao
