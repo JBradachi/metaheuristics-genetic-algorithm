@@ -1,5 +1,5 @@
-use std::fs::File;
 use std::collections::HashSet;
+use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 #[derive(Clone, Debug, Default)]
@@ -33,16 +33,14 @@ fn read_integers(text: &str) -> Vec<i32> {
 impl Problema {
     /// Carrega os dados do problema de um arquivo externo
     pub fn load_from(file_path: &str) -> Self {
-        let file = File::open(file_path)
-            .expect("Arquivo não pode ser aberto");
+        let file = File::open(file_path).expect("Arquivo não pode ser aberto");
         let mut lines = BufReader::new(file).lines();
 
         // Primeira linha:
         // N: número de ingredientes
         // I: número de ingredientes incompatíveis
         // W: peso máximo
-        let first_line = lines.next()
-            .unwrap().unwrap(); // sabemos que essa linha existe
+        let first_line = lines.next().unwrap().unwrap(); // sabemos que essa linha existe
         let nums = read_integers(&first_line);
         let num_ingred = nums[0] as usize;
         let num_incompat = nums[1];
@@ -88,6 +86,11 @@ impl Problema {
             restricoes[j].insert(k);
             // restricoes[k].insert(j); se precisar descomente, com isso gera um grafo sem direção
         }
-        Problema{ peso_max, restricoes, ingredientes, num_ingred }
+        Problema {
+            peso_max,
+            restricoes,
+            ingredientes,
+            num_ingred,
+        }
     }
 }

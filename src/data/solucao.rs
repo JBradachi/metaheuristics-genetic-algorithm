@@ -16,22 +16,22 @@ pub struct Solucao {
 }
 
 pub fn calcula_fitness(
-    ingredientes: &Vec<usize>, 
+    ingredientes: &Vec<usize>,
     problema: &Problema,
-    // pressao = 1 => sem pressão 
-    pressao: f64) -> f64 {
-
+    // pressao = 1 => sem pressão
+    pressao: f64,
+) -> f64 {
     let mut sabores: f64 = 0.0;
     let mut peso_acomulado: i32 = 0;
     let mut incompativeis: f64 = 0.0;
-    
+
     // pega todos os valores
-    for ing in ingredientes.iter().copied(){
+    for ing in ingredientes.iter().copied() {
         sabores += problema.ingredientes[ing].sabor as f64;
         peso_acomulado += problema.ingredientes[ing].peso;
 
-        for inc in ingredientes.iter().copied(){
-            if problema.restricoes[ing as usize].contains(&inc){
+        for inc in ingredientes.iter().copied() {
+            if problema.restricoes[ing as usize].contains(&inc) {
                 incompativeis += 1.0;
             }
         }
@@ -39,21 +39,25 @@ pub fn calcula_fitness(
 
     // realiza os calculos para calcular o fitness
     let diff = peso_acomulado - problema.peso_max;
-    let penalidade = PEN_PESO *  if diff >=0 {diff as f64} else {0.0}
-                    + PEN_INCOMPATIVEIS * incompativeis;
-    
+    let penalidade =
+        PEN_PESO * if diff >= 0 { diff as f64 } else { 0.0 } + PEN_INCOMPATIVEIS * incompativeis;
+
     let fitness = sabores - pressao * penalidade;
     fitness
 }
 
-pub fn populacao_inicial(tamanho_populacao: usize, pressao_inicial: f64, problema: &Problema) -> Vec<Solucao> {
+pub fn populacao_inicial(
+    tamanho_populacao: usize,
+    pressao_inicial: f64,
+    problema: &Problema,
+) -> Vec<Solucao> {
     let mut populacao: Vec<Solucao> = Vec::new();
 
-    for _j in 0..tamanho_populacao{
-        let mut ingredientes:Vec<usize> = Vec::new();
-        for i in 0..problema.num_ingred{
+    for _j in 0..tamanho_populacao {
+        let mut ingredientes: Vec<usize> = Vec::new();
+        for i in 0..problema.num_ingred {
             let r = rand::thread_rng().gen_range(0.0, 1.0);
-            if r >= AR{
+            if r >= AR {
                 ingredientes.push(i);
             }
         }
@@ -62,11 +66,11 @@ pub fn populacao_inicial(tamanho_populacao: usize, pressao_inicial: f64, problem
     populacao
 }
 
-impl Solucao{
+impl Solucao {
     pub fn new(ingredientes: Vec<usize>, problema: &Problema, pressao: f64) -> Self {
         let resultado = calcula_fitness(&ingredientes, problema, pressao);
-        Solucao { 
-            ingredientes, 
+        Solucao {
+            ingredientes,
             resultado,
         }
     }

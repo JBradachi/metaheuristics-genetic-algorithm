@@ -1,5 +1,5 @@
-pub mod solucao;
 pub mod problema;
+pub mod solucao;
 
-pub use solucao::Solucao;
 pub use problema::Problema;
+pub use solucao::Solucao;
