@@ -72,8 +72,11 @@ fn bit_flip(problema: &Problema, mut populacao: Vec<Solucao>) -> Vec<Solucao>{
 fn mutacao(problema: &Problema, pais: Vec<Solucao>, filhos: Vec<Solucao>)
     -> (Vec<Solucao>, Vec<Solucao>) {
 
-        let pais_mutados: Vec<Solucao> = bit_flip(problema, pais.clone());
-        let filhos_mutados: Vec<Solucao> = bit_flip(problema, filhos.clone());
+        let pais_mutados: Vec<Solucao> = 
+            bit_flip(problema, pais.clone());
+
+        let filhos_mutados: Vec<Solucao> = 
+            bit_flip(problema, filhos.clone());
         
         (pais_mutados, filhos_mutados)
     }
