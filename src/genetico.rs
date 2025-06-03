@@ -115,27 +115,40 @@ fn selecao(populacao: Vec<Solucao>) -> Vec<Solucao> {
 
 pub fn genetico(problema: &Problema, tamanho_populacao: usize) -> Solucao {
     // Cria a população inicial e calcula seu fitness
-    let melhor_solucao: Solucao;
     let populacao: Vec<Solucao> = populacao_inicial(tamanho_populacao, problema);
+    let mut melhor_solucao: Solucao = get_melhor_solucao(&populacao);
+    let mut iteracao_sem_mudanca: i32 = 0;
 
-    // while condição de parada
-    // (n° x de iterações sem mudar o melhor indivíduo)
 
-    // Seleção
-    // seleciona os pais que irão cruzar
-    // obs: guardar melhor indivíduo
+    while iteracao_sem_mudanca <= 100 {
+        // (n° x de iterações sem mudar o melhor indivíduo)
 
-    // cruzamento (recebe a população de pais escolhidos)
-    // -> população de filhos
+        // Seleção
+        // seleciona os pais que irão cruzar
+        // obs: guardar melhor indivíduo
 
-    // mutação na nova população de filhos e pais
-    // (recebe população de pais e filhos)
-    // -> população mutada de (filhos, pais)
+        // cruzamento (recebe a população de pais escolhidos)
+        // -> população de filhos
 
-    // Seleção (recebe população mutada de pais e filhos)
-    // seleciona quem irá para a proxima geração
-    // nova população
+        // mutação na nova população de filhos e pais
+        // (recebe população de pais e filhos)
+        // -> população mutada de (filhos, pais)
 
-    melhor_solucao = get_melhor_solucao(&populacao);
+        // Seleção (recebe população mutada de pais e filhos)
+        // seleciona quem irá para a proxima geração
+        // nova população
+        
+        melhor_solucao = get_melhor_solucao(&populacao);
+        
+        // TODO: ZOOORRRRBA faz retornar da seleção se mudou ou nn 
+        // o melhor resultado pra ser condiçãodo if a seguir:
+         
+        // if melhor_solucao.resultado == resultado_anterior{
+        //     iteracao_sem_mudanca += 1;
+        // } else {
+        //     iteracao_sem_mudanca = 0;
+        // }
+    }
+    
     melhor_solucao
 }
