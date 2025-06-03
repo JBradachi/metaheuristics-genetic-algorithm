@@ -14,7 +14,7 @@ fn get_melhor_solucao(populacao: &Vec<Solucao>) -> Solucao {
     melhor_solucao.clone()
 }
 
-fn crossover(problema: &Problema, pressao: f64, pais: Vec<Solucao>) -> Vec<Solucao> {
+fn crossover(problema: &Problema, pais: Vec<Solucao>) -> Vec<Solucao> {
     let mut filhos = Vec::new();
     while filhos.len() < pais.len() {
         let mut rng = rand::thread_rng();
@@ -38,18 +38,18 @@ fn crossover(problema: &Problema, pressao: f64, pais: Vec<Solucao>) -> Vec<Soluc
                 f0.push(ing1);
             }
         }
-        let s0 = Solucao::new(f0, problema, pressao);
-        let s1 = Solucao::new(f1, problema, pressao);
+        let s0 = Solucao::new(f0, problema);
+        let s1 = Solucao::new(f1, problema);
         filhos.push(s0);
         filhos.push(s1);
     }
     filhos
 }
 
-pub fn genetico(problema: &Problema, pressao: f64, tamanho_populacao: usize) -> Solucao {
+pub fn genetico(problema: &Problema, tamanho_populacao: usize) -> Solucao {
     // Cria a população inicial e calcula seu fitness
     let melhor_solucao: Solucao;
-    let populacao: Vec<Solucao> = populacao_inicial(tamanho_populacao, pressao, &problema);
+    let populacao: Vec<Solucao> = populacao_inicial(tamanho_populacao, problema);
 
     // while condição de parada
     // (n° x de iterações sem mudar o melhor indivíduo)

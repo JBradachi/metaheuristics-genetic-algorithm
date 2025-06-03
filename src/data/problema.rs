@@ -18,6 +18,11 @@ pub struct Problema {
     /// Armazenado como uma lista de adjacência, essencialmente
     pub restricoes: Vec<HashSet<usize>>,
 
+    /// Pressão seletiva atual. Começa pequena e vai aumentando conforme
+    /// o algoritmo vai caminhando para o final. Influencia no cálculo do
+    /// valor de fitness
+    pub pressao: f64,
+
     /// Ingredientes disponíveis. Cada um é identificado por seu índice
     pub ingredientes: Vec<Ingrediente>,
     pub num_ingred: usize,
@@ -30,8 +35,11 @@ fn read_integers(text: &str) -> Vec<i32> {
         .collect()
 }
 
+const PRESSAO_INICIAL: f64 = 1.0;
+
 impl Problema {
     /// Carrega os dados do problema de um arquivo externo
+    // NOTA posteriormente a pressão inicial poderá ser uma constante
     pub fn load_from(file_path: &str) -> Self {
         let file = File::open(file_path).expect("Arquivo não pode ser aberto");
         let mut lines = BufReader::new(file).lines();
@@ -89,6 +97,7 @@ impl Problema {
         Problema {
             peso_max,
             restricoes,
+            pressao: PRESSAO_INICIAL,
             ingredientes,
             num_ingred,
         }
