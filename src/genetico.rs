@@ -1,6 +1,6 @@
-use rand::Rng;
+use rand::{Rng, distributions::range};
 
-use crate::data::{Problema, Solucao, solucao::populacao_inicial};
+use crate::data::{Problema, Solucao, problema, solucao::populacao_inicial};
 
 const AR: f64 = 0.5;
 
@@ -48,38 +48,69 @@ fn crossover(problema: &Problema, pais: Vec<Solucao>) -> Vec<Solucao> {
     filhos
 }
 
-fn bit_flip(problema: &Problema, mut populacao: Vec<Solucao>) -> Vec<Solucao>{
+fn bit_flip(problema: &Problema, mut populacao: Vec<Solucao>) -> Vec<Solucao> {
     let mut rng = rand::thread_rng();
     let mut tmp = populacao.iter_mut();
-        while let Some(i) = tmp.next() {
-            let r = rng.gen_range(0.0, 1.0);
+    while let Some(i) = tmp.next() {
+        let r = rng.gen_range(0.0, 1.0);
 
-            //verifica se receberá a mutação
-            if r >= AR {
-
-                //faz a mutação
-                let gene_mutado: usize = rng.gen_range(1, problema.num_ingred - 2);
-                if i.ingredientes.contains(&gene_mutado) {
-                    i.ingredientes.retain(|&x| x != gene_mutado);
-                } else {
-                    i.ingredientes.push(gene_mutado);
-                }
+        //verifica se receberá a mutação
+        if r >= AR {
+            //faz a mutação
+            let gene_mutado: usize = rng.gen_range(1, problema.num_ingred - 2);
+            if i.ingredientes.contains(&gene_mutado) {
+                i.ingredientes.retain(|&x| x != gene_mutado);
+            } else {
+                i.ingredientes.push(gene_mutado);
             }
         }
-        populacao
+    }
+    populacao
 }
 
-fn mutacao(problema: &Problema, pais: Vec<Solucao>, filhos: Vec<Solucao>)
-    -> (Vec<Solucao>, Vec<Solucao>) {
+fn mutacao(
+    problema: &Problema,
+    pais: Vec<Solucao>,
+    filhos: Vec<Solucao>,
+) -> (Vec<Solucao>, Vec<Solucao>) {
+    let pais_mutados: Vec<Solucao> = bit_flip(problema, pais.clone());
 
-        let pais_mutados: Vec<Solucao> = 
-            bit_flip(problema, pais.clone());
+    let filhos_mutados: Vec<Solucao> = bit_flip(problema, filhos.clone());
 
-        let filhos_mutados: Vec<Solucao> = 
-            bit_flip(problema, filhos.clone());
-        
-        (pais_mutados, filhos_mutados)
+    (pais_mutados, filhos_mutados)
+}
+
+fn realiza_torneio(competidores: Vec<Solucao>) -> Solucao {
+    let mut campeao_atual: Solucao = competidores[0].clone();
+    let tamanho_torneio = competidores.len();
+    for i in 1..tamanho_torneio {
+        if competidores[i].resultado > campeao_atual.resultado {
+            campeao_atual = competidores[i].clone();
+        }
     }
+
+    campeao_atual
+}
+
+fn selecao(populacao: Vec<Solucao>) -> Vec<Solucao> {
+    // TODO: externalizar tamanho do torneio. Desacoplar
+    let tamanho_torneio = 2;
+    let mut rng = rand::thread_rng();
+
+    let mut populacao_final: Vec<Solucao> = Vec::new();
+    let mut competidores: Vec<Solucao> = Vec::new();
+
+    for _ in 0..populacao.len() {
+        for _ in 0..tamanho_torneio {
+            let competidor: &Solucao = rng.choose(&populacao).unwrap();
+            competidores.push(competidor.clone());
+        }
+        populacao_final.push(realiza_torneio(competidores.clone()));
+        competidores.clear();
+    }
+
+    populacao_final
+}
 
 pub fn genetico(problema: &Problema, tamanho_populacao: usize) -> Solucao {
     // Cria a população inicial e calcula seu fitness
