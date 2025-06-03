@@ -2,6 +2,8 @@ use rand::Rng;
 
 use crate::data::{Problema, Solucao, solucao::populacao_inicial};
 
+const AR: f64 = 0.5;
+
 fn get_melhor_solucao(populacao: &Vec<Solucao>) -> Solucao {
     let mut melhor_solucao: &Solucao;
     let mut tmp = populacao.iter();
@@ -45,6 +47,36 @@ fn crossover(problema: &Problema, pais: Vec<Solucao>) -> Vec<Solucao> {
     }
     filhos
 }
+
+fn bit_flip(problema: &Problema, mut populacao: Vec<Solucao>) -> Vec<Solucao>{
+    let mut rng = rand::thread_rng();
+    let mut tmp = populacao.iter_mut();
+        while let Some(i) = tmp.next() {
+            let r = rng.gen_range(0.0, 1.0);
+
+            //verifica se receberá a mutação
+            if r >= AR {
+
+                //faz a mutação
+                let gene_mutado: usize = rng.gen_range(1, problema.num_ingred - 2);
+                if i.ingredientes.contains(&gene_mutado) {
+                    i.ingredientes.retain(|&x| x != gene_mutado);
+                } else {
+                    i.ingredientes.push(gene_mutado);
+                }
+            }
+        }
+        populacao
+}
+
+fn mutacao(problema: &Problema, pais: Vec<Solucao>, filhos: Vec<Solucao>)
+    -> (Vec<Solucao>, Vec<Solucao>) {
+
+        let pais_mutados: Vec<Solucao> = bit_flip(problema, pais.clone());
+        let filhos_mutados: Vec<Solucao> = bit_flip(problema, filhos.clone());
+        
+        (pais_mutados, filhos_mutados)
+    }
 
 pub fn genetico(problema: &Problema, tamanho_populacao: usize) -> Solucao {
     // Cria a população inicial e calcula seu fitness
