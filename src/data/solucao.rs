@@ -60,4 +60,7 @@ impl Solucao {
             resultado,
         }
     }
+    pub fn update(&mut self, problema: &Problema) {
+        self.resultado = calcula_fitness(&self.ingredientes, problema);
+    }
 }

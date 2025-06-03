@@ -63,6 +63,7 @@ fn bit_flip(problema: &Problema, mut populacao: Vec<Solucao>) -> Vec<Solucao> {
             } else {
                 i.ingredientes.push(gene_mutado);
             }
+            i.update(problema);
         }
     }
     populacao
