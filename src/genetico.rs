@@ -1,6 +1,8 @@
+use std::result;
+
 use rand::Rng;
 
-use crate::data::{Problema, Solucao, solucao::populacao_inicial};
+use crate::data::{problema, solucao::populacao_inicial, Problema, Solucao};
 
 const AR: f64 = 0.5;
 
@@ -16,7 +18,21 @@ fn get_melhor_solucao(populacao: &Vec<Solucao>) -> Solucao {
     melhor_solucao.clone()
 }
 
-fn crossover(problema: &Problema, pais: Vec<Solucao>) -> Vec<Solucao> {
+fn get_melhor_solucao_i(populacao: &Vec<Solucao>) -> (Solucao, usize) {
+    let mut melhor_solucao: &Solucao;
+    let mut tmp = populacao.iter();
+    melhor_solucao = tmp.next().unwrap();
+    let mut indice: usize = 0;
+    while let Some(i) = tmp.next() {
+        if i.resultado > melhor_solucao.resultado {
+            melhor_solucao = i;
+        }
+        indice += 1;
+    }
+    (melhor_solucao.clone(), indice)
+}
+
+fn crossover(problema: &Problema, pais: &Vec<Solucao>) -> Vec<Solucao> {
     let mut filhos = Vec::new();
     while filhos.len() < pais.len() {
         let mut rng = rand::thread_rng();
@@ -71,14 +87,12 @@ fn bit_flip(problema: &Problema, mut populacao: Vec<Solucao>) -> Vec<Solucao> {
 
 fn mutacao(
     problema: &Problema,
-    pais: Vec<Solucao>,
     filhos: Vec<Solucao>,
-) -> (Vec<Solucao>, Vec<Solucao>) {
-    let pais_mutados: Vec<Solucao> = bit_flip(problema, pais.clone());
+) -> Vec<Solucao> {
 
     let filhos_mutados: Vec<Solucao> = bit_flip(problema, filhos.clone());
 
-    (pais_mutados, filhos_mutados)
+    filhos_mutados
 }
 
 fn realiza_torneio(competidores: Vec<Solucao>) -> Solucao {
@@ -93,7 +107,7 @@ fn realiza_torneio(competidores: Vec<Solucao>) -> Solucao {
     campeao_atual
 }
 
-fn selecao(populacao: Vec<Solucao>) -> Vec<Solucao> {
+fn selecao(populacao: &Vec<Solucao>) -> Vec<Solucao> {
     let tamanho_torneio = 2;
     let mut rng = rand::thread_rng();
 
@@ -112,41 +126,48 @@ fn selecao(populacao: Vec<Solucao>) -> Vec<Solucao> {
     populacao_final
 }
 
-pub fn genetico(problema: &Problema, tamanho_populacao: usize) -> Solucao {
+fn elitismo(pais: &mut Vec<Solucao>, filhos: &mut Vec<Solucao>) {
+    let k_pais = 10;
+    let mut rng = rand::thread_rng();
+    
+    for _ in 0..k_pais {
+        let (melhor_pai, i) = get_melhor_solucao_i(pais);
+        pais.remove(i);
+
+        let filho_removido: usize = rng.gen_range(0, filhos.len()); 
+        filhos.remove(filho_removido);
+        filhos.push(melhor_pai);
+    }
+}
+
+pub fn genetico(problema: &Problema, tamanho_populacao: usize) -> (Solucao, Solucao) {
     // Cria a população inicial e calcula seu fitness
-    let populacao: Vec<Solucao> = populacao_inicial(tamanho_populacao, problema);
+    let mut populacao: Vec<Solucao> = populacao_inicial(tamanho_populacao, problema);
     let mut melhor_solucao: Solucao = get_melhor_solucao(&populacao);
+    let solucao_inicial: Solucao = melhor_solucao.clone();
+    let mut resultado_anterior = melhor_solucao.resultado;
 
     let mut iteracao_sem_mudanca: i32 = 0;
     while iteracao_sem_mudanca <= 100 {
         // (n° x de iterações sem mudar o melhor indivíduo)
+        
+        let mut pais: Vec<Solucao> = selecao(&populacao);
 
-        // Seleção
-        // seleciona os pais que irão cruzar
-        // obs: guardar melhor indivíduo
+        let filhos: Vec<Solucao> = crossover(problema, &pais);
 
-        // cruzamento (recebe a população de pais escolhidos)
-        // -> população de filhos
+        populacao = mutacao(problema, filhos);
 
-        // mutação na nova população de filhos e pais
-        // (recebe população de pais e filhos)
-        // -> população mutada de (filhos, pais)
-
-        // Seleção (recebe população mutada de pais e filhos)
-        // seleciona quem irá para a proxima geração
-        // nova população
+        elitismo(&mut pais, &mut populacao);
 
         melhor_solucao = get_melhor_solucao(&populacao);
 
-        // TODO: ZOOORRRRBA faz retornar da seleção se mudou ou nn
-        // o melhor resultado pra ser condição do if a seguir:
-
-        // if melhor_solucao.resultado == resultado_anterior{
-        //     iteracao_sem_mudanca += 1;
-        // } else {
-        //     iteracao_sem_mudanca = 0;
-        // }
+        if melhor_solucao.resultado == resultado_anterior{
+            iteracao_sem_mudanca += 1;
+        } else {
+            resultado_anterior = melhor_solucao.resultado;
+            iteracao_sem_mudanca = 0;
+        }
     }
 
-    melhor_solucao
+    (solucao_inicial, melhor_solucao)
 }

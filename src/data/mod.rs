@@ -1,4 +1,3 @@
-pub mod populacao;
 pub mod problema;
 pub mod solucao;
 
