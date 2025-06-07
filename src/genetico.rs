@@ -139,7 +139,7 @@ fn elitismo(problema: &Problema, pais: &mut Vec<Solucao>, filhos: &mut Vec<Soluc
 
     for _ in 0..k_pais {
         let (mut melhor_pai, i) = get_melhor_solucao_i(pais);
-        melhor_pai.update(problema);
+        // melhor_pai.update(problema);
         pais.remove(i);
 
         let filho_removido: usize = rng.gen_range(0, filhos.len());
@@ -176,7 +176,7 @@ pub fn genetico(problema: &mut Problema, tamanho_populacao: usize) -> (Solucao, 
             iteracao_sem_mudanca = 0;
         }
         println!("Acabou uma iteração ({iteracao_sem_mudanca})");
-        problema.pressao *= 1.05
+        // problema.pressao *= 1.05
     }
 
     (solucao_inicial, melhor_solucao)
