@@ -1,10 +1,8 @@
-use std::result;
-
 use rand::Rng;
 
-use crate::data::{problema, solucao::populacao_inicial, Problema, Solucao};
+use crate::data::{solucao::populacao_inicial, Problema, Solucao};
 
-const AR: f64 = 0.5;
+const AR: f64 = 0.2;
 
 fn get_melhor_solucao(populacao: &Vec<Solucao>) -> Solucao {
     let mut melhor_solucao: &Solucao;
@@ -40,20 +38,29 @@ fn crossover(problema: &Problema, pais: &Vec<Solucao>) -> Vec<Solucao> {
         let p1 = rng.choose(&pais).unwrap();
         let corte: usize = rng.gen_range(1, problema.num_ingred - 2);
 
+        let n = if p0.ingredientes.len() > p1.ingredientes.len() {
+            p0.ingredientes.len()
+        } else {
+            p1.ingredientes.len()
+        };
         let mut f0 = Vec::new();
         let mut f1 = Vec::new();
-        for i in 0..p0.ingredientes.len() {
-            let ing0 = p0.ingredientes[i];
-            let ing1 = p1.ingredientes[i];
-            if ing0 < corte {
-                f0.push(ing0);
-            } else {
-                f1.push(ing0);
+        for i in 0..n {
+            if i < p0.ingredientes.len() {
+                let ing0 = p0.ingredientes[i];
+                if ing0 < corte {
+                    f0.push(ing0);
+                } else {
+                    f1.push(ing0);
+                }
             }
-            if ing1 < corte {
-                f1.push(ing1);
-            } else {
-                f0.push(ing1);
+            if i < p1.ingredientes.len() {
+                let ing1 = p1.ingredientes[i];
+                if ing1 < corte {
+                    f1.push(ing1);
+                } else {
+                    f0.push(ing1);
+                }
             }
         }
         let s0 = Solucao::new(f0, problema);
@@ -127,20 +134,20 @@ fn selecao(populacao: &Vec<Solucao>) -> Vec<Solucao> {
 }
 
 fn elitismo(pais: &mut Vec<Solucao>, filhos: &mut Vec<Solucao>) {
-    let k_pais = 10;
+    let k_pais = 3;
     let mut rng = rand::thread_rng();
-    
+
     for _ in 0..k_pais {
         let (melhor_pai, i) = get_melhor_solucao_i(pais);
         pais.remove(i);
 
-        let filho_removido: usize = rng.gen_range(0, filhos.len()); 
+        let filho_removido: usize = rng.gen_range(0, filhos.len());
         filhos.remove(filho_removido);
         filhos.push(melhor_pai);
     }
 }
 
-pub fn genetico(problema: &Problema, tamanho_populacao: usize) -> (Solucao, Solucao) {
+pub fn genetico(problema: &mut Problema, tamanho_populacao: usize) -> (Solucao, Solucao) {
     // Cria a população inicial e calcula seu fitness
     let mut populacao: Vec<Solucao> = populacao_inicial(tamanho_populacao, problema);
     let mut melhor_solucao: Solucao = get_melhor_solucao(&populacao);
@@ -148,9 +155,9 @@ pub fn genetico(problema: &Problema, tamanho_populacao: usize) -> (Solucao, Solu
     let mut resultado_anterior = melhor_solucao.resultado;
 
     let mut iteracao_sem_mudanca: i32 = 0;
-    while iteracao_sem_mudanca <= 100 {
+    while iteracao_sem_mudanca <= 50 {
         // (n° x de iterações sem mudar o melhor indivíduo)
-        
+
         let mut pais: Vec<Solucao> = selecao(&populacao);
 
         let filhos: Vec<Solucao> = crossover(problema, &pais);
@@ -161,12 +168,14 @@ pub fn genetico(problema: &Problema, tamanho_populacao: usize) -> (Solucao, Solu
 
         melhor_solucao = get_melhor_solucao(&populacao);
 
-        if melhor_solucao.resultado == resultado_anterior{
+        if melhor_solucao.resultado == resultado_anterior {
             iteracao_sem_mudanca += 1;
         } else {
             resultado_anterior = melhor_solucao.resultado;
             iteracao_sem_mudanca = 0;
         }
+        println!("Acabou uma iteração ({iteracao_sem_mudanca})");
+        problema.pressao *= 1.05
     }
 
     (solucao_inicial, melhor_solucao)
