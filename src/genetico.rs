@@ -1,6 +1,6 @@
-use rand::{Rng, distributions::range};
+use rand::Rng;
 
-use crate::data::{Problema, Solucao, problema, solucao::populacao_inicial};
+use crate::data::{Problema, Solucao, solucao::populacao_inicial};
 
 const AR: f64 = 0.5;
 
@@ -94,7 +94,6 @@ fn realiza_torneio(competidores: Vec<Solucao>) -> Solucao {
 }
 
 fn selecao(populacao: Vec<Solucao>) -> Vec<Solucao> {
-    // TODO: externalizar tamanho do torneio. Desacoplar
     let tamanho_torneio = 2;
     let mut rng = rand::thread_rng();
 
@@ -117,9 +116,8 @@ pub fn genetico(problema: &Problema, tamanho_populacao: usize) -> Solucao {
     // Cria a população inicial e calcula seu fitness
     let populacao: Vec<Solucao> = populacao_inicial(tamanho_populacao, problema);
     let mut melhor_solucao: Solucao = get_melhor_solucao(&populacao);
+
     let mut iteracao_sem_mudanca: i32 = 0;
-
-
     while iteracao_sem_mudanca <= 100 {
         // (n° x de iterações sem mudar o melhor indivíduo)
 
@@ -137,18 +135,18 @@ pub fn genetico(problema: &Problema, tamanho_populacao: usize) -> Solucao {
         // Seleção (recebe população mutada de pais e filhos)
         // seleciona quem irá para a proxima geração
         // nova população
-        
+
         melhor_solucao = get_melhor_solucao(&populacao);
-        
-        // TODO: ZOOORRRRBA faz retornar da seleção se mudou ou nn 
-        // o melhor resultado pra ser condiçãodo if a seguir:
-         
+
+        // TODO: ZOOORRRRBA faz retornar da seleção se mudou ou nn
+        // o melhor resultado pra ser condição do if a seguir:
+
         // if melhor_solucao.resultado == resultado_anterior{
         //     iteracao_sem_mudanca += 1;
         // } else {
         //     iteracao_sem_mudanca = 0;
         // }
     }
-    
+
     melhor_solucao
 }
