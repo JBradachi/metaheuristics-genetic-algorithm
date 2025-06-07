@@ -9,7 +9,7 @@ fn main() {
         let tempo_inicial = std::time::Instant::now();
         let (solucao_inicial, melhor_solucao) = genetico(&mut problema, tamanho_populacao);
         let tempo_final = tempo_inicial.elapsed();
-        println!("Iteração {i}:");
+        println!("Iteração {:?}:", i + 1);
         println!("- Solução inicial {:?}", solucao_inicial);
         println!("- Solução final {:?}", melhor_solucao);
         println!("- Tempo: {:?}", tempo_final);
