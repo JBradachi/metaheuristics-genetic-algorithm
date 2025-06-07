@@ -1,6 +1,6 @@
 use rand::Rng;
 
-use crate::data::{solucao::populacao_inicial, Problema, Solucao};
+use crate::data::{Problema, Solucao, solucao::populacao_inicial};
 
 const AR: f64 = 0.2;
 
@@ -92,11 +92,7 @@ fn bit_flip(problema: &Problema, mut populacao: Vec<Solucao>) -> Vec<Solucao> {
     populacao
 }
 
-fn mutacao(
-    problema: &Problema,
-    filhos: Vec<Solucao>,
-) -> Vec<Solucao> {
-
+fn mutacao(problema: &Problema, filhos: Vec<Solucao>) -> Vec<Solucao> {
     let filhos_mutados: Vec<Solucao> = bit_flip(problema, filhos.clone());
 
     filhos_mutados
@@ -175,7 +171,7 @@ pub fn genetico(problema: &mut Problema, tamanho_populacao: usize) -> (Solucao, 
             resultado_anterior = melhor_solucao.resultado;
             iteracao_sem_mudanca = 0;
         }
-        println!("Acabou uma iteração ({iteracao_sem_mudanca})");
+        // println!("Acabou uma iteração ({iteracao_sem_mudanca})");
         // problema.pressao *= 1.05
     }
 
