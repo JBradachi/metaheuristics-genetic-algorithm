@@ -115,7 +115,7 @@ fn realiza_torneio(competidores: Vec<Solucao>) -> Solucao {
 }
 
 fn selecao(populacao: &Vec<Solucao>) -> Vec<Solucao> {
-    let tamanho_torneio = 2;
+    let tamanho_torneio = 3;
     let mut rng = rand::thread_rng();
 
     let mut populacao_final: Vec<Solucao> = Vec::new();
@@ -133,12 +133,13 @@ fn selecao(populacao: &Vec<Solucao>) -> Vec<Solucao> {
     populacao_final
 }
 
-fn elitismo(pais: &mut Vec<Solucao>, filhos: &mut Vec<Solucao>) {
+fn elitismo(problema: &Problema, pais: &mut Vec<Solucao>, filhos: &mut Vec<Solucao>) {
     let k_pais = 3;
     let mut rng = rand::thread_rng();
 
     for _ in 0..k_pais {
-        let (melhor_pai, i) = get_melhor_solucao_i(pais);
+        let (mut melhor_pai, i) = get_melhor_solucao_i(pais);
+        melhor_pai.update(problema);
         pais.remove(i);
 
         let filho_removido: usize = rng.gen_range(0, filhos.len());
@@ -155,7 +156,7 @@ pub fn genetico(problema: &mut Problema, tamanho_populacao: usize) -> (Solucao, 
     let mut resultado_anterior = melhor_solucao.resultado;
 
     let mut iteracao_sem_mudanca: i32 = 0;
-    while iteracao_sem_mudanca <= 50 {
+    while iteracao_sem_mudanca <= 100 {
         // (n° x de iterações sem mudar o melhor indivíduo)
 
         let mut pais: Vec<Solucao> = selecao(&populacao);
@@ -164,7 +165,7 @@ pub fn genetico(problema: &mut Problema, tamanho_populacao: usize) -> (Solucao, 
 
         populacao = mutacao(problema, filhos);
 
-        elitismo(&mut pais, &mut populacao);
+        elitismo(&problema, &mut pais, &mut populacao);
 
         melhor_solucao = get_melhor_solucao(&populacao);
 
