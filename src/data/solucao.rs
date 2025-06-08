@@ -3,7 +3,7 @@ use rand::Rng;
 
 const PEN_PESO: f64 = 100.0;
 const PEN_INCOMPATIVEIS: f64 = 100.0;
-const AR: f64 = 0.2;
+const AR: f64 = 0.9;
 
 #[derive(Clone, Debug, Default)]
 pub struct Solucao {

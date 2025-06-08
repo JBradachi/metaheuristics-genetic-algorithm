@@ -171,7 +171,7 @@ pub fn genetico(problema: &mut Problema, tamanho_populacao: usize) -> (Solucao, 
             resultado_anterior = melhor_solucao.resultado;
             iteracao_sem_mudanca = 0;
         }
-        // println!("Acabou uma iteração ({iteracao_sem_mudanca})");
+        //println!("Acabou uma iteração ({iteracao_sem_mudanca})");
         // problema.pressao *= 1.05
     }
 
